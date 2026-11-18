@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: docuquery-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: docuquery_db
+      POSTGRES_USER: docuquery_user
+      POSTGRES_PASSWORD: docuquery_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: docuquery-backend
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/docuquery_db
+  #     SPRING_DATASOURCE_USERNAME: docuquery_user
+  #     SPRING_DATASOURCE_PASSWORD: docuquery_password
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: docuquery-frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
+
+volumes:
+  pgdata:
