@@ -38,17 +38,28 @@ docuquery/
 - **Docker & Docker Compose** (for vector database)
 - **Node.js** (for frontend development)
 
-### 1. Start Vector Database
-Start the PostgreSQL container with `pgvector` enabled:
-```bash
-docker compose up -d
-```
+## Initial Backend Setup
 
-### 2. Run the Backend
-```bash
-cd backend
-./mvnw spring-boot:run
-```
+### Initialized the Java 21 and Spring Boot backend.
 
-### 3. Setup Frontend
-Add your frontend application files inside the `frontend/` directory.
+Configured PostgreSQL 18 connectivity using Spring Data JPA and Hibernate.
+
+Installed and enabled the pgvector PostgreSQL extension.
+
+Created a dedicated database user with appropriate privileges.
+
+Configured database credentials through environment variables instead of hardcoding secrets.
+
+Verified successful database connectivity and Hibernate initialization.
+
+### Current Status:
+
+Basic Spring Boot application and PostgreSQL connection are working.
+
+No document ingestion, retrieval, or RAG functionality has been implemented yet.
+
+Spring AI model auto-configuration (chat and embeddings) is temporarily disabled.
+
+PGVector auto-configuration is temporarily excluded until the embedding model is configured.
+
+#### Next Step: Configure the AI model and embedding integration, then implement document ingestion and retrieval.

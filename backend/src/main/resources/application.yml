@@ -1,2 +1,33 @@
-spring.application.name=docuquery
+spring:
+  application:
+    name: docuquery
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/docuquery
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update      # Hibernate Updates your tables based on JPA entities
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  ai:
+    vectorstore:
+      pgvector:
+        intialize-schema: false
+#        intialize-schema: true
+#        index-type: HNSW
+#        distance-type: COSINE_DISTANCE
+    model:
+      chat: none
+      embedding: none
+      audio:
+        speech: none
+        transcription: none
+      image: none
+      moderation: none

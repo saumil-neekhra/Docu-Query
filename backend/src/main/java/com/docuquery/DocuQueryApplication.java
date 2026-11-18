@@ -1,11 +1,13 @@
 package com.docuquery;
 
+import org.springframework.ai.vectorstore.pgvector.autoconfigure.PgVectorStoreAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 
-@SpringBootApplication (
-	exclude = {DataSourceAutoConfiguration.class}
+@SpringBootApplication(
+		exclude = {
+				PgVectorStoreAutoConfiguration.class
+		}
 )
 public class DocuQueryApplication {
 
