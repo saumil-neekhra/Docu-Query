@@ -10,24 +10,35 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update      # Hibernate Updates your tables based on JPA entities
+      ddl-auto: update     # Hibernate Updates your tables based on JPA entities
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 
   ai:
+    ollama:
+      base-url: http://localhost:11434
+
+      chat:
+        think: false
+        options:
+          model: qwen3.5:4b
+          temperature: 0.3
+          num-ctx: 4096
+          num-predict: 256
+
+      embedding:
+        options:
+          model: nomic-embed-text
+
     vectorstore:
       pgvector:
-        intialize-schema: false
-#        intialize-schema: true
-#        index-type: HNSW
-#        distance-type: COSINE_DISTANCE
-    model:
-      chat: none
-      embedding: none
-      audio:
-        speech: none
-        transcription: none
-      image: none
-      moderation: none
+        initialize-schema: true
+        dimensions: 768
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 25MB
