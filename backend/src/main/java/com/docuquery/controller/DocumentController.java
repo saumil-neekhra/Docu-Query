@@ -8,12 +8,16 @@ import com.docuquery.rag.generation.DocumentQAService;
 import com.docuquery.rag.ingestion.DocumentIngestionService;
 import com.docuquery.rag.retrieval.DocumentRetrievalService;
 import com.docuquery.repository.DocumentRepository;
+import com.docuquery.service.DocumentEntityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.document.Document;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +32,7 @@ public class DocumentController {
     private final DocumentRetrievalService retrievalService;
     private final DocumentQAService qaService;
     private final DocumentRepository documentRepository;
+    private final DocumentEntityService documentEntityService;
 
 //    For Checking Connection
     @GetMapping("")
@@ -49,6 +54,24 @@ public class DocumentController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadDocument(
         @RequestParam("file") MultipartFile file) throws IOException {
+
+        // Check whether a file was provided.
+        if (file == null || file.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Please upload a non-empty PDF file"
+            );
+        }
+        // Check the file extension.
+        String filename = file.getOriginalFilename();
+
+        if (filename == null ||
+                !filename.toLowerCase().endsWith(".pdf")) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Only PDF files are allowed"
+            );
+        }
 
     // 1. Create and save document metadata
     DocumentEntity document =
@@ -93,10 +116,17 @@ public class DocumentController {
     @PostMapping("/qa/{documentId}")
     public String askQuestion(
             @PathVariable Long documentId,
-            @RequestBody QuestionRequest request ) {
+            @Valid @RequestBody QuestionRequest request ) {
         return qaService.genrateAnswer(request.question(),documentId);
     }
 
 
+    @DeleteMapping("/{documentId}")
+    public ResponseEntity<String> deleteDocument(@PathVariable Long documentId){
+        documentEntityService.deleteDocument(documentId);
+        return ResponseEntity.ok(
+                "Document and its embeddings deleted successfully"
+        );
+    }
 
 }

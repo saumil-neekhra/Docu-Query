@@ -1,3 +1,7 @@
 package com.docuquery.dto;
 
-public record QuestionRequest(String question) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record QuestionRequest(
+        @NotBlank(message = "Question cannit be empty")
+        String question) {}
