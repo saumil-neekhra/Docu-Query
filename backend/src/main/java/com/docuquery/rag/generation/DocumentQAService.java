@@ -1,5 +1,7 @@
 package com.docuquery.rag.generation;
 
+import com.docuquery.dto.QAResponse;
+import com.docuquery.dto.SourceCitation;
 import com.docuquery.rag.retrieval.DocumentRetrievalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
@@ -16,14 +18,15 @@ public class DocumentQAService {
     private final DocumentRetrievalService retrievalService;
     private final ChatClient.Builder chatClientBuilder;
 
-    public String genrateAnswer(String question, Long documentId){
+    public QAResponse genrateAnswer(String question, Long documentId){
 
 //         1. Retrieve relevant chunks
         List<Document> chunks = retrievalService.retrieve(question, documentId);
 
 //        2. Handle empty retrieval
         if(chunks.isEmpty()){
-            return "I couldn't find relevant information in this document.";
+            return new QAResponse("I couldn't find relevant information in this document.",
+                    List.of());
         }
 
 //        3. Convert retrieved chunks into context
@@ -69,6 +72,34 @@ public class DocumentQAService {
             );
         }
 
-        return answer;
+        // 7. Extract citations from retrieved metadata
+        List<SourceCitation> sources = chunks.stream()
+                .map(chunk -> {
+
+                    String filename = String.valueOf(
+                            chunk.getMetadata().get("filename")
+                    );
+
+                    Object pageValue =
+                            chunk.getMetadata().get("page_number");
+
+                    Integer pageNumber = pageValue instanceof Number
+                            ? ((Number) pageValue).intValue()
+                            : pageValue != null
+                            ? Integer.valueOf(pageValue.toString())
+                            : null;
+
+                    String excerpt = chunk.getText();
+
+                    return new SourceCitation(
+                            filename,
+                            pageNumber,
+                            excerpt
+                    );
+                })
+                .toList();
+
+        // 8. Return answer + sources
+        return new QAResponse(answer, sources);
     }
 }
