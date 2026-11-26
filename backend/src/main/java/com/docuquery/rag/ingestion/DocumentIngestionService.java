@@ -20,7 +20,7 @@ public class DocumentIngestionService {
 
     public void ingestDocument(MultipartFile file, Long documentId) throws IOException {
 
-//        1. Read PDF
+//        1. Read PDF from Apache PDFBox
         PagePdfDocumentReader reader = new PagePdfDocumentReader(
                 new InputStreamResource(file.getInputStream())
         );
