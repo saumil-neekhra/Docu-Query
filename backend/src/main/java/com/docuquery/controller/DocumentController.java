@@ -1,6 +1,7 @@
 package com.docuquery.controller;
 
 import com.docuquery.dto.DocumentResponse;
+import com.docuquery.dto.QAResponse;
 import com.docuquery.dto.QuestionRequest;
 import com.docuquery.entity.DocumentEntity;
 import com.docuquery.entity.DocumentStatus;
@@ -114,10 +115,14 @@ public class DocumentController {
 
 //    For asking question from the model and genrating the answer
     @PostMapping("/qa/{documentId}")
-    public String askQuestion(
+    public ResponseEntity<QAResponse> askQuestion(
             @PathVariable Long documentId,
             @Valid @RequestBody QuestionRequest request ) {
-        return qaService.genrateAnswer(request.question(),documentId);
+        QAResponse response = qaService.genrateAnswer(
+                request.question(),documentId
+        );
+
+        return ResponseEntity.ok(response);
     }
 
 
